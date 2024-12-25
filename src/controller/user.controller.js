@@ -3,6 +3,7 @@ import ApiError from "../utils/ApiError.js";
 import { User } from "../models/user.model.js";
 import uploadOnCloudinary from "../utils/cloudinary.js"
 import ApiResponse from "../utils/ApiResponse.js"
+;
 
 const registerUser = asyncHandler(
      async (req, res) => {
@@ -35,11 +36,12 @@ const registerUser = asyncHandler(
           if (existingUser) {
                throw new ApiError(409, "User already exists.")
           }
-
+      
           const avatarLocalPath = req.files?.avatar[0]?.path
           const coverImageLoacalPath = req.files?.coverImage[0]?.path
-
+         
           if (!avatarLocalPath) {
+            
                throw new ApiError(400, "Avatar is required!")
           }
 
@@ -56,8 +58,8 @@ const registerUser = asyncHandler(
                     email,
                     fullname,
                     password,
-                    avatar:avatar.URL,
-                    coverImage:coverImage?.URL || ""
+                    avatar:avatar?.url,
+                    coverImage:coverImage?.url || "",
                }
           )
 
@@ -73,4 +75,24 @@ const registerUser = asyncHandler(
      }
 )
 
-export { registerUser }
+const deleteUserById = asyncHandler(
+     async (req,res)=>{
+          const {username} = req.body
+
+          console.log(req.body)
+
+          const result = await User.deleteOne({
+               username
+          })
+
+          if(result.deletedCount===0){
+               throw new ApiError(500,"User not deleted")
+          }
+
+          return res.status(200).json(
+               new ApiResponse(201,result,"User deleted successfully!")
+          )
+     }
+)
+
+export { registerUser, deleteUserById }

@@ -2,27 +2,27 @@ import dotenv from "dotenv";
 import app from "./app.js"
 import connectDB from "./db/DbConnection.js";
 
-dotenv.config({
-     path:"./.env"
-});
 
+dotenv.config({
+     path: "./.env"
+});
 
 const PORT = process.env.PORT || 0;
 
 connectDB()
-.then(()=>{
-     app.on("error",(error)=>{
-          console.error("Error",error)
-     })
+     .then(() => {
+          app.on("error", (error) => {
+               console.error("Error", error)
+          })
 
-     app.listen(PORT,()=>{
-          console.log(`Listening on port ${PORT}`);
+          app.listen(PORT, () => {
+               console.log(`Listening on port ${PORT}`);
+          })
      })
-})
-.catch((error)=>{
-     console.log("Database connection error !!!", error);
-     throw error;
-})
+     .catch((error) => {
+          console.log("Database connection error !!!", error);
+          throw error;
+     })
 
 
 
