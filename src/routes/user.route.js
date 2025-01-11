@@ -1,7 +1,13 @@
 import { Router } from "express";
-import { registerUser, deleteUserById, loginUser, logoutUser } from "../controller/user.controller.js"
+import {
+     registerUser,
+     deleteUserById,
+     loginUser,
+     logoutUser,
+     refreshAccessToken
+} from "../controller/user.controller.js"
 import { upload } from "../middleware/multer.middleware.js"
-import {verifyJWT} from "../middleware/auth.middleware.js"
+import { verifyJWT } from "../middleware/auth.middleware.js"
 
 const router = Router();
 
@@ -23,8 +29,14 @@ router.route("/register").post(
 
 router.route("/login").post(loginUser)
 
+router.route("/delete-user").delete(deleteUserById)
+
+// Secured Routes
+
 router.route("/logout").post(verifyJWT, logoutUser)
 
-router.route("/delete-user").delete(deleteUserById)
+router.route("/refresh-token").post(refreshAccessToken)
+
+
 
 export default router;
