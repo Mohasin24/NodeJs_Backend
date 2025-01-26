@@ -1,7 +1,7 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import ApiError from "../utils/ApiError.js";
 import { User } from "../models/user.model.js";
-import uploadOnCloudinary from "../utils/cloudinary.js";
+import {uploadOnCloudinary,deleteOnCloudinary} from "../utils/cloudinary.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
 import { options, ACCESS_TOKEN, REFRESH_TOKEN } from "../constant.js";
@@ -301,10 +301,26 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
 
      //TODO: delete old image - assignment
 
+     const oldAvatar = req.user?.avatar
+
+     if(!oldAvatar){
+          throw new ApiError(400,"Old avatar image not found.")
+     }
+
+     // Extracting the old avatar public id
+     const oldAvatarPublicId = oldAvatar.split("/").slice(-1)[0].split(".")[0]
+
+     //upload new avatar
      const avatar = await uploadOnCloudinary(avatarLocalPath)
 
      if (!avatar.url) {
           throw new ApiError(400, "Error while uploading avatar file on server")
+     }
+
+     const result = await deleteOnCloudinary(oldAvatarPublicId)
+
+     if(oldAvatarPublicId){
+           
      }
 
      const user = await User.findByIdAndUpdate(
@@ -490,8 +506,6 @@ const getUserWatchHistory = asyncHandler(async (req, res) => {
           "Watch history fetched successfully"
      ))
 })
-
-
 
 export {
      registerUser,
